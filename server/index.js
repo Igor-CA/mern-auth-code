@@ -8,6 +8,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const User = require("./models/userSchema");
+const path = require("path");
 
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
@@ -165,6 +166,19 @@ app.post("/change-password", async (req, res) => {
 app.get("/user", (req, res) => {
 	res.send(req.user);
 });
+
+
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(path.join(__dirname, "../client/build")));
+
+	app.get("*", (req, res) =>
+		res.sendFile(
+			path.resolve(__dirname, "../", "client", "build", "index.html")
+		)
+	);
+} else {
+	app.get("/", (req, res) => res.send("Please set to production"));
+}
 
 app.listen(3001, () => {
 	console.log("Listen to port 3001");
