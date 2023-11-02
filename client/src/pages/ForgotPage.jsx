@@ -37,7 +37,7 @@ export default function ForgotPage() {
 				headers: {
 					Authorization: process.env.REACT_APP_API_KEY,
 				},
-				url: `/api/user/forgot`,
+				url: `/forgot`,
 			});
 		} catch (error) {
 			const customErrorMessage = error.response.data.message;
@@ -68,7 +68,7 @@ export default function ForgotPage() {
 	};
 
 	return (
-		<div className="mx-auto mb-2 bg-white rounded-lg w-full max-w-sm text-center text-slate-500 shadow-2xl p-10">
+		<div className="mt-10 mx-auto mb-2 bg-white rounded-lg w-full max-w-sm text-center text-slate-500 shadow-2xl p-10">
 			<h1 className="text-2xl font-bold">Mude sua senha</h1>
 			<form
 				method="post"

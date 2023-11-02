@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
 				headers: {
 					Authorization: process.env.REACT_APP_API_KEY,
 				},
-				url: `/api/user/reset-password`,
+				url: `/reset-password`,
 			});
 			navigate("/login");
 		} catch (error) {
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
 	};
 
 	return (
-		<div className="mx-auto mb-2 bg-white rounded-lg w-full max-w-sm text-center text-slate-500 shadow-2xl p-10">
+		<div className="mt-10  mx-auto mb-2 bg-white rounded-lg w-full max-w-sm text-center text-slate-500 shadow-2xl p-10">
 			<h1 className="text-2xl font-bold">Defina sua nova senha</h1>
 			<form
 				method="post"
