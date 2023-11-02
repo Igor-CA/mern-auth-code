@@ -7,9 +7,10 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const path = require("path");
+const MongoStore = require("connect-mongo");
 const app = express();
 
-const userFunctions = require("./controllers/user")
+const userFunctions = require("./controllers/user");
 
 mongoose
 	.connect(process.env.MONGODB_URI, {
@@ -33,6 +34,12 @@ app.use(
 		secret: process.env.SECRET_KEY,
 		resave: true,
 		saveUninitialized: true,
+		store: MongoStore.create({
+			mongoUrl: process.env.MONGODB_URI,
+			collection: "sessions",
+			ttl: 15 * 24 * 60 * 60, //15 days
+			autoRemove: "native",
+		}),
 	})
 );
 app.use(cookieParser(process.env.SECRET_KEY));
@@ -50,7 +57,6 @@ app.post("/api/reset-password", userFunctions.resetPassword);
 app.get("/api/user", (req, res) => {
 	res.send(req.user);
 });
-
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "../client/build")));
