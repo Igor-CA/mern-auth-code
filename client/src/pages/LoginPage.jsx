@@ -76,7 +76,7 @@ export default function LoginPage() {
 	};
 
 	return (
-		<div className="mt-10 mx-auto mb-2 bg-white rounded-lg w-full max-w-sm text-center text-slate-500 shadow-2xl p-10">
+		<div className="form-container">
 			<h1 className="text-2xl font-bold">Entrar</h1>
 			<form
 				action="/login"
