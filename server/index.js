@@ -70,6 +70,6 @@ if (process.env.NODE_ENV === "production") {
 	app.get("/", (req, res) => res.send("Please set to production"));
 }
 
-app.listen(3001, () => {
-	console.log("Listen to port 3001");
+app.listen(process.env.PORT, () => {
+	console.log(`Listen to port ${process.env.PORT}`);
 });
