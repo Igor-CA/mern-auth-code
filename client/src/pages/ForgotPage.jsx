@@ -1,12 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export default function ResetPasswordPage() {
-	const { userId, token } = useParams();
+export default function ForgotPage() {
 	const [formData, setFormData] = useState({ email: "" });
 	const [errors, setErrors] = useState([]);
-	const navigate = useNavigate();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -34,14 +32,13 @@ export default function ResetPasswordPage() {
 		try {
 			const response = await axios({
 				method: "POST",
-				data: { ...formData, userId, token },
+				data: formData,
 				withCredentials: true,
 				headers: {
 					Authorization: process.env.REACT_APP_API_KEY,
 				},
-				url: `/api/reset-password`,
+				url: `/api/forgot`,
 			});
-			navigate("/login");
 		} catch (error) {
 			if (error.response.data.errors){
 				const validationErrorsList = error.response.data.errors
@@ -63,28 +60,12 @@ export default function ResetPasswordPage() {
 		const inputName = e.target.name;
 		const input = e.target;
 
-		const validationMessages = {
-			password: {
-				valueMissing: "A senha é obrigatória",
-				patternMismatch:
-					"A senha deve conter pelo menos uma letra, número e caractere especial(!@#$%^&*)",
-				tooShort: "A senha precisa de pelo menos 8 caracteres",
-			},
-			"confirm-password": {
-				valueMissing: "O campo de confirmar senha é obrigatório",
-				patternMismatch: "As senhas devem coincidir",
-			},
-		};
+		let customErrorMessage = "";
 
-		const validationTypes = [
-			"tooShort",
-			"patternMismatch",
-			"typeMismatch",
-			"valueMissing",
-		];
-		const inputValidity = validationTypes.find((type) => input.validity[type]);
+		if (input.validity.valueMissing) {
+			customErrorMessage = `${inputName} field is required.`;
+		}
 
-		const customErrorMessage = validationMessages[inputName][inputValidity];
 		setErrors((prevErrors) => [...prevErrors, customErrorMessage]);
 
 		setTimeout(() => {
@@ -94,7 +75,7 @@ export default function ResetPasswordPage() {
 
 	return (
 		<div className="form-container">
-			<h1 className="text-2xl font-bold">Defina sua nova senha</h1>
+			<h1 className="text-2xl font-bold">Mude sua senha</h1>
 			<form
 				method="post"
 				className="space-y-4 flex flex-col"
@@ -102,15 +83,16 @@ export default function ResetPasswordPage() {
 					handleSubmit(e);
 				}}
 			>
-				<label htmlFor="password" className="hidden">
-					Senha:
+				<label htmlFor="email" className="hidden">
+					Email:
 				</label>
 				<input
-					type="password"
-					name="password"
-					placeholder="Password"
-					id="password"
+					type="text"
+					name="email"
+					id="email"
+					placeholder="Email"
 					className="bg-gray-100 p-2.5 rounded"
+					value={formData.login}
 					onChange={(e) => {
 						handleChange(e);
 					}}
@@ -118,30 +100,8 @@ export default function ResetPasswordPage() {
 						handleInvalid(e);
 					}}
 					required
-					pattern="^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$"
-					minLength="8"
 				/>
-				<label htmlFor="confirm-password" className="hidden">
-					Confirme sua senha:
-				</label>
-				<input
-					type="password"
-					name="confirm-password"
-					placeholder="Confirm password"
-					id="confirm-password"
-					className="bg-gray-100 p-2.5 rounded"
-					onChange={(e) => {
-						handleChange(e);
-					}}
-					onInvalid={(e) => {
-						handleInvalid(e);
-					}}
-					required
-					pattern={formData.password}
-				/>
-				<button className="bg-blue-400 text-white p-1 font-semibold rounded">
-					Definir nova senha
-				</button>
+				<button className="bg-blue-400 text-white p-1 font-semibold rounded">Mudar senha</button>
 				<Link to={"/login"} className="text-blue-400">
 					Entrar
 				</Link>

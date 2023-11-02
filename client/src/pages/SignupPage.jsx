@@ -1,32 +1,21 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
-export default function ResetPasswordPage() {
-	const { userId, token } = useParams();
-	const [formData, setFormData] = useState({ email: "" });
-	const [errors, setErrors] = useState([]);
+export default function SignupPage() {
 	const navigate = useNavigate();
+	const [errors, setErrors] = useState([]);
+	const [formData, setFormData] = useState({
+		username: "",
+		password: "",
+		email: "",
+		"confirm-password": "",
+	});
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData({ ...formData, [name]: value });
-	};
-
-	const renderErrorsMessage = () => {
-		return (
-			<div className="bg-red-100 rounded-md border border-red-400 fixed top-2 right-1/2 translate-x-1/2">
-				<div>
-					{errors.map((erro, index) => {
-						return (
-							<p key={index} className="text-red-400 px-10 py-1 font-semibold">
-								{erro}
-							</p>
-						);
-					})}
-				</div>
-			</div>
-		);
 	};
 
 	const handleSubmit = async (e) => {
@@ -34,12 +23,12 @@ export default function ResetPasswordPage() {
 		try {
 			const response = await axios({
 				method: "POST",
-				data: { ...formData, userId, token },
+				data: formData,
 				withCredentials: true,
 				headers: {
 					Authorization: process.env.REACT_APP_API_KEY,
 				},
-				url: `/api/reset-password`,
+				url: `/api/signup`,
 			});
 			navigate("/login");
 		} catch (error) {
@@ -58,12 +47,37 @@ export default function ResetPasswordPage() {
 		}
 	};
 
+	const renderErrorsMessage = () => {
+		return (
+			<div className="bg-red-100 rounded-md border border-red-400 fixed top-2 right-1/2 translate-x-1/2">
+				<div>
+					{errors.map((erro, index) => {
+						return (
+							<p key={index} className="text-red-400 px-10 py-1 font-semibold">
+								{erro}
+							</p>
+						);
+					})}
+				</div>
+			</div>
+		);
+	};
+
 	const handleInvalid = (e) => {
 		e.preventDefault();
 		const inputName = e.target.name;
 		const input = e.target;
 
 		const validationMessages = {
+			email: {
+				valueMissing: "É obrigatório informar um email",
+				typeMismatch: "O email inserido não é um email válido",
+			},
+			username: {
+				valueMissing: "É obrigatório informar um nome de usuário",
+				patternMismatch:
+					"O nome de usuário não pode ter caracteres especiais (!@#$%^&*) e deve ter entre 3 e 16 caracteres.",
+			},
 			password: {
 				valueMissing: "A senha é obrigatória",
 				patternMismatch:
@@ -73,6 +87,9 @@ export default function ResetPasswordPage() {
 			"confirm-password": {
 				valueMissing: "O campo de confirmar senha é obrigatório",
 				patternMismatch: "As senhas devem coincidir",
+			},
+			"tos-checkbox": {
+				valueMissing: "Concorde com nossos termos para criar uma conta",
 			},
 		};
 
@@ -85,6 +102,7 @@ export default function ResetPasswordPage() {
 		const inputValidity = validationTypes.find((type) => input.validity[type]);
 
 		const customErrorMessage = validationMessages[inputName][inputValidity];
+
 		setErrors((prevErrors) => [...prevErrors, customErrorMessage]);
 
 		setTimeout(() => {
@@ -94,7 +112,7 @@ export default function ResetPasswordPage() {
 
 	return (
 		<div className="form-container">
-			<h1 className="text-2xl font-bold">Defina sua nova senha</h1>
+			<h1 className="text-2xl font-bold pb-12">Criar conta</h1>
 			<form
 				method="post"
 				className="space-y-4 flex flex-col"
@@ -102,15 +120,51 @@ export default function ResetPasswordPage() {
 					handleSubmit(e);
 				}}
 			>
+				<label htmlFor="email" className="hidden">
+					Email:
+				</label>
+				<input
+					type="email"
+					name="email"
+					placeholder="Email"
+					id="email"
+					className="bg-gray-100 p-2.5 rounded"
+					onChange={(e) => {
+						handleChange(e);
+					}}
+					onInvalid={(e) => {
+						handleInvalid(e);
+					}}
+					required
+				/>
+				<label htmlFor="username" className="hidden">
+					User name:{" "}
+				</label>
+				<input
+					type="text"
+					name="username"
+					placeholder="Nome de usuário"
+					id="username"
+					className="bg-gray-100 p-2 rounded"
+					onChange={(e) => {
+						handleChange(e);
+					}}
+					onInvalid={(e) => {
+						handleInvalid(e);
+					}}
+					required
+					pattern="^[A-Za-z0-9]{3,16}$"
+					maxLength="16"
+				/>
 				<label htmlFor="password" className="hidden">
-					Senha:
+					Password:
 				</label>
 				<input
 					type="password"
 					name="password"
-					placeholder="Password"
+					placeholder="Senha"
 					id="password"
-					className="bg-gray-100 p-2.5 rounded"
+					className="bg-gray-100 p-2 rounded"
 					onChange={(e) => {
 						handleChange(e);
 					}}
@@ -122,14 +176,14 @@ export default function ResetPasswordPage() {
 					minLength="8"
 				/>
 				<label htmlFor="confirm-password" className="hidden">
-					Confirme sua senha:
+					Confirm password:
 				</label>
 				<input
 					type="password"
 					name="confirm-password"
-					placeholder="Confirm password"
+					placeholder="Confirmar senha"
 					id="confirm-password"
-					className="bg-gray-100 p-2.5 rounded"
+					className="bg-gray-100 p-2 rounded"
 					onChange={(e) => {
 						handleChange(e);
 					}}
@@ -139,11 +193,27 @@ export default function ResetPasswordPage() {
 					required
 					pattern={formData.password}
 				/>
-				<button className="bg-blue-400 text-white p-1 font-semibold rounded">
-					Definir nova senha
+				<label htmlFor="tos-checkbox" className="text-justify">
+					<input
+						type="checkbox"
+						name="tos-checkbox"
+						id="tos-checkbox"
+						className="mr-2"
+						required
+						onInvalid={(e) => {
+							handleInvalid(e);
+						}}
+						onChange={(e) => {
+							handleChange(e);
+						}}
+					/>
+					Ao marcar esta aba você concorda com nosso <strong className="font-semibold text-blue-400 cursor-pointer">termos e condições</strong>
+				</label>
+				<button className="bg-blue-400 text-white p-1 w-full font-semibold rounded-md">
+					Criar conta
 				</button>
 				<Link to={"/login"} className="text-blue-400">
-					Entrar
+					Já tem conta?
 				</Link>
 			</form>
 			{errors.length > 0 && renderErrorsMessage()}
