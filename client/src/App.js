@@ -9,7 +9,7 @@ import LoginPage from "./pages/LoginPage";
 function App() {
 	
 	return (
-		<div className="bg-gray-100">
+		<div className="bg-sky-100">
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<MainPage />}></Route>
