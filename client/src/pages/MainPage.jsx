@@ -9,7 +9,7 @@ export default function MainPage() {
 		axios({
 			method: "GET",
 			withCredentials: true,
-			url: "/user",
+			url: "/api/user",
 		}).then((res) => {
 			console.log(res);
 			setUserInfo(res.data);

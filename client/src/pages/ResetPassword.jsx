@@ -39,12 +39,18 @@ export default function ResetPasswordPage() {
 				headers: {
 					Authorization: process.env.REACT_APP_API_KEY,
 				},
-				url: `/reset-password`,
+				url: `/api/reset-password`,
 			});
 			navigate("/login");
 		} catch (error) {
-			const customErrorMessage = error.response.data.message;
-			setErrors((prevErrors) => [...prevErrors, customErrorMessage]);
+			if (error.response.data.errors){
+				const validationErrorsList = error.response.data.errors
+				const errors = validationErrorsList.map(error => {return error.msg})
+				setErrors((prevErrors) => [...prevErrors, ...errors])
+			}else{
+				const customErrorMessage = error.response.data.message;
+				setErrors((prevErrors) => [...prevErrors, customErrorMessage]);
+			}
 
 			setTimeout(() => {
 				setErrors([]);
