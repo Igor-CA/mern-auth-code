@@ -242,14 +242,14 @@ exports.resetPassword = [
 			return res.status(400).json({ errors: errors.array() });
 		}
 
-		const currentTimeStamp = new Date();
 		const user = await User.findOne({ _id: req.body.userId });
 		if (!user || user.token !== req.body.token) {
 			res.status(400).json({ message: "Erro: Este link não é valido" });
 			return;
 		}
-
-		if (currentTimeStamp < user.timestamp) {
+		const currentTimeStamp = new Date();
+		const userTimeStamp = new Date(user.tokenTimestamp)
+		if (currentTimeStamp > userTimeStamp) {
 			res.status(400).json({ message: "Erro: Esse link já expirou" });
 			return;
 		}

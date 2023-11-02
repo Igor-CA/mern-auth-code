@@ -3,7 +3,7 @@ const user = new mongoose.Schema({
 	username: { type: String },
 	password: { type: String },
 	email: { type: String },
-	timestamp: { type: Date },
+	tokenTimestamp: { type: Date },
 	token: { type: String },
 });
 
