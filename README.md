@@ -1,7 +1,8 @@
 # MERN authentication/Autenticação de usupario com MERN
 
 ## EN
-### Description:
+### [Demo](https://mern-auth.igorcaldeira.dev/)
+## Description:
 This repository hosts a simple user authentication website developed using the MERN stack (MongoDB, Express.js, React, and Node.js) and styled with Tailwind CSS. The project consists of a React page that uses React Router to handle client-side navigation and connects to a simple API for data manipulation.
 
 ### Key Features:
@@ -40,6 +41,7 @@ npm start
 This project was inspired by the following tutorial: https://github.com/woodburydev/passport-local-video. <b/r>
 Form validation on the server side was based on the MDN tutorial: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website.
 ## PT-BR
+### [Demonstração](https://mern-auth.igorcaldeira.dev/)
 ### Descrição:
 Este repositório abriga um site simples de autenticação de usuário desenvolvido com a stack MERN (MongoDB, Express.js, React e Node.js) e estilizado usando o Tailwind CSS. O projeto consiste em uma página React que utiliza o React Router para facilitar a navegação no lado do cliente e se conecta a uma API simples para a manipulação de dados.
 
