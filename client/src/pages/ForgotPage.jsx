@@ -91,7 +91,7 @@ export default function ForgotPage() {
 					name="email"
 					id="email"
 					placeholder="Email"
-					className="bg-gray-100 p-2.5 rounded"
+					className="bg-slate-100 p-2.5 rounded"
 					value={formData.login}
 					onChange={(e) => {
 						handleChange(e);
@@ -101,8 +101,8 @@ export default function ForgotPage() {
 					}}
 					required
 				/>
-				<button className="bg-blue-400 text-white p-1 font-semibold rounded">Mudar senha</button>
-				<Link to={"/login"} className="text-blue-400">
+				<button className="bg-slate-600 text-white p-1 font-semibold rounded">Mudar senha</button>
+				<Link to={"/login"} className="text-slate-600 underline">
 					Entrar
 				</Link>
 			</form>

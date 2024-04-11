@@ -3,6 +3,6 @@
 @tailwind utilities;
 @layer components {
     .form-container{
-      @apply md:mt-10 mx-auto md:h-auto md:mb-2 h-screen bg-white md:rounded-lg w-full md:max-w-sm text-center text-slate-500 md:shadow-2xl p-10;
+      @apply md:mt-10 mx-auto md:h-auto md:mb-2 h-screen bg-white md:rounded-lg w-full md:max-w-sm text-center text-slate-600 md:shadow-2xl p-10;
     }
   }

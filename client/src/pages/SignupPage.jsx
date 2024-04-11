@@ -32,11 +32,13 @@ export default function SignupPage() {
 			});
 			navigate("/login");
 		} catch (error) {
-			if (error.response.data.errors){
-				const validationErrorsList = error.response.data.errors
-				const errors = validationErrorsList.map(error => {return error.msg})
-				setErrors((prevErrors) => [...prevErrors, ...errors])
-			}else{
+			if (error.response.data.errors) {
+				const validationErrorsList = error.response.data.errors;
+				const errors = validationErrorsList.map((error) => {
+					return error.msg;
+				});
+				setErrors((prevErrors) => [...prevErrors, ...errors]);
+			} else {
 				const customErrorMessage = error.response.data.message;
 				setErrors((prevErrors) => [...prevErrors, customErrorMessage]);
 			}
@@ -53,7 +55,10 @@ export default function SignupPage() {
 				<div>
 					{errors.map((erro, index) => {
 						return (
-							<p key={index} className="text-red-400 px-10 py-1 font-semibold">
+							<p
+								key={index}
+								className="text-red-400 px-10 py-1 font-semibold"
+							>
 								{erro}
 							</p>
 						);
@@ -99,7 +104,9 @@ export default function SignupPage() {
 			"typeMismatch",
 			"valueMissing",
 		];
-		const inputValidity = validationTypes.find((type) => input.validity[type]);
+		const inputValidity = validationTypes.find(
+			(type) => input.validity[type]
+		);
 
 		const customErrorMessage = validationMessages[inputName][inputValidity];
 
@@ -128,7 +135,7 @@ export default function SignupPage() {
 					name="email"
 					placeholder="Email"
 					id="email"
-					className="bg-gray-100 p-2.5 rounded"
+					className="bg-slate-100 p-2.5 rounded"
 					onChange={(e) => {
 						handleChange(e);
 					}}
@@ -145,7 +152,7 @@ export default function SignupPage() {
 					name="username"
 					placeholder="Nome de usuário"
 					id="username"
-					className="bg-gray-100 p-2 rounded"
+					className="bg-slate-100 p-2 rounded"
 					onChange={(e) => {
 						handleChange(e);
 					}}
@@ -164,7 +171,7 @@ export default function SignupPage() {
 					name="password"
 					placeholder="Senha"
 					id="password"
-					className="bg-gray-100 p-2 rounded"
+					className="bg-slate-100 p-2 rounded"
 					onChange={(e) => {
 						handleChange(e);
 					}}
@@ -183,7 +190,7 @@ export default function SignupPage() {
 					name="confirm-password"
 					placeholder="Confirmar senha"
 					id="confirm-password"
-					className="bg-gray-100 p-2 rounded"
+					className="bg-slate-100 p-2 rounded"
 					onChange={(e) => {
 						handleChange(e);
 					}}
@@ -207,14 +214,20 @@ export default function SignupPage() {
 							handleChange(e);
 						}}
 					/>
-					Ao marcar esta aba você concorda com nosso <strong className="font-semibold text-blue-400 cursor-pointer">termos e condições</strong>
+					Ao marcar esta aba você concorda com nosso{" "}
+					<strong className="font-semibold text-slate-600 cursor-pointer underline">
+						termos e condições
+					</strong>
 				</label>
-				<button className="bg-blue-400 text-white p-1 w-full font-semibold rounded-md">
+				<button className="bg-slate-600 text-white p-1 w-full font-semibold rounded-md">
 					Criar conta
 				</button>
-				<Link to={"/login"} className="text-blue-400">
+				<p>
 					Já tem conta?
-				</Link>
+					<Link to={"/login"} className="text-slate-600 underline">
+						Logar
+					</Link>
+				</p>
 			</form>
 			{errors.length > 0 && renderErrorsMessage()}
 		</div>
