@@ -261,3 +261,12 @@ exports.resetPassword = [
 		res.send("Password changed successfully");
 	}),
 ];
+
+exports.logout = (req, res, next) => {
+	req.logout(function (err) {
+		if (err) {
+			return next(err);
+		}
+		res.send({ msg: "Successfully logout" });
+	});
+};

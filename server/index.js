@@ -50,6 +50,7 @@ require("./passportConfig")(passport);
 app.post("/api/signup", userFunctions.signup);
 
 app.post("/api/login", userFunctions.login);
+app.get("/api/logout", userFunctions.logout);
 
 app.post("/api/forgot", userFunctions.sendResetEmail);
 app.post("/api/reset-password", userFunctions.resetPassword);
