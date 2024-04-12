@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
+
 const { body, validationResult } = require("express-validator");
 
 exports.signup = [
@@ -69,12 +70,14 @@ exports.signup = [
 		} = req.body;
 
 		if (password !== confirmPassword) {
-			return res.status(409).json({ message: "As senhas devem coincidir" });
-		}
-		if (!tosCheckbox) {
 			return res
 				.status(409)
-				.json({ message: "Concorde com nossos termos para criar uma conta" });
+				.json({ message: "As senhas devem coincidir" });
+		}
+		if (!tosCheckbox) {
+			return res.status(409).json({
+				message: "Concorde com nossos termos para criar uma conta",
+			});
 		}
 
 		const [existingUser] = await User.find()
@@ -124,9 +127,9 @@ exports.login = [
 			.or([{ username: req.body.login }, { email: req.body.login }])
 			.limit(1);
 		if (!user) {
-			res
-				.status(401)
-				.json({ message: "Nome de usuário ou senha incorretos tente novamente" });
+			res.status(401).json({
+				message: "Nome de usuário ou senha incorretos tente novamente",
+			});
 			return;
 		}
 
@@ -140,9 +143,9 @@ exports.login = [
 				res.send({ msg: "Successfully authenticated" });
 			});
 		} else {
-			res
-				.status(401)
-				.json({ message: "Nome de usuário ou senha incorretos tente novamente" });
+			res.status(401).json({
+				message: "Nome de usuário ou senha incorretos tente novamente",
+			});
 		}
 	}),
 ];
@@ -248,7 +251,7 @@ exports.resetPassword = [
 			return;
 		}
 		const currentTimeStamp = new Date();
-		const userTimeStamp = new Date(user.tokenTimestamp)
+		const userTimeStamp = new Date(user.tokenTimestamp);
 		if (currentTimeStamp > userTimeStamp) {
 			res.status(400).json({ message: "Erro: Esse link já expirou" });
 			return;
@@ -269,4 +272,16 @@ exports.logout = (req, res, next) => {
 		}
 		res.send({ msg: "Successfully logout" });
 	});
+};
+
+exports.isAuthenticated = (req, res, next) => {
+	if (!req.user) {
+		return res.status(401).json({ error: "Authentication required" });
+    }
+	console.log("is authenticated")
+    next();
+};
+
+exports.changeProfilePicture = (req, res, next) => {
+	res.send({ msg: "Successfully image" });
 };

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function MainPage() {
+	const [file, setFile] = useState()
 	const [userInfo, setUserInfo] = useState(null);
 
 	const getUser = () => {
@@ -24,6 +25,24 @@ export default function MainPage() {
 			console.log(res);
 			setUserInfo(null);
 		});
+	};
+
+	const uploadImage = () => {
+		console.log()
+		const formData = new FormData()
+		formData.append("file", file)
+		console.log(formData)
+		axios({
+			method: "POST",
+			withCredentials: true,
+			url: "http://localhost:3001/api/changeProfilePic",
+			data: formData, 
+			headers: {
+				"Content-Type": "multipart/form-data" 
+			}
+		}).then((res) => {
+			console.log(res.data);
+		});
 	}
 
 	useEffect(getUser, []);
@@ -34,7 +53,30 @@ export default function MainPage() {
 					<h1 className="font-bold text-4xl">
 						Bem vindo <u>{userInfo.username}!</u> Como vai?
 					</h1>
-					<button className="bg-slate-600 text-white p-1 w-full font-semibold rounded-md mt-8" onClick={logout}>
+					<label
+						htmlFor="file"
+						className="bg-slate-600 text-white p-1 block w-full font-semibold rounded-md mt-8"
+					>
+						Image
+					</label>
+					<input
+						type="file"
+						name="file"
+						id="file"
+						accept="image/*"
+						className="hidden"
+						onChange={(e) => setFile(e.target.files[0])}
+					/>
+					<button
+						className="bg-slate-600 text-white p-1 w-full font-semibold rounded-md mt-8"
+						onClick={uploadImage}
+					>
+						enviar imagem
+					</button>
+					<button
+						className="bg-slate-600 text-white p-1 w-full font-semibold rounded-md mt-8"
+						onClick={logout}
+					>
 						Sair da conta
 					</button>
 				</div>

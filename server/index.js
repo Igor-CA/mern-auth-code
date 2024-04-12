@@ -8,9 +8,22 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const path = require("path");
 const MongoStore = require("connect-mongo");
+const userFunctions = require("./controllers/user");
 const app = express();
 
-const userFunctions = require("./controllers/user");
+const multer = require("multer");
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, "public/images");
+	},
+	filename: function (req, file, cb) {
+		const userId = req.user._id; 
+        const fileExtension = file.originalname.split('.').pop();
+        const filename = `profilePicture_${userId}.${fileExtension}`;
+        cb(null, filename);
+	},
+});
+const upload = multer({ storage ,limits: { fileSize: 10 * 1024 * 1024 }});
 
 mongoose
 	.connect(process.env.MONGODB_URI, {
@@ -50,6 +63,12 @@ require("./passportConfig")(passport);
 app.post("/api/signup", userFunctions.signup);
 
 app.post("/api/login", userFunctions.login);
+app.post(
+	"/api/changeProfilePic",
+	userFunctions.isAuthenticated,
+	upload.single("file"),
+	userFunctions.changeProfilePicture
+);
 app.get("/api/logout", userFunctions.logout);
 
 app.post("/api/forgot", userFunctions.sendResetEmail);
@@ -59,15 +78,17 @@ app.get("/api/user", (req, res) => {
 	res.send(req.user);
 });
 
-app.get('/api/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+app.get(
+	"/api/auth/google",
+	passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/');
-  }
+app.get(
+	"/auth/google/callback",
+	passport.authenticate("google", { failureRedirect: "/login" }),
+	(req, res) => {
+		res.redirect("/");
+	}
 );
 
 if (process.env.NODE_ENV === "production") {
