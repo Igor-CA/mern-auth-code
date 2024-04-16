@@ -1,3 +1,5 @@
+const DESIRED_IMAGE_SIZE = 512 //PX
+
 export default function setCanvasPreview(
 	image, // HTMLImageElement
 	canvas, // HTMLCanvasElement
@@ -8,16 +10,12 @@ export default function setCanvasPreview(
 		throw new Error("No 2d context");
 	}
 
-	// devicePixelRatio slightly increases sharpness on retina devices
-	// at the expense of slightly slower render times and needing to
-	// size the image back down if you want to download/upload and be
-	// true to the images natural size.
 	const pixelRatio = window.devicePixelRatio;
 	const scaleX = image.naturalWidth / image.width;
 	const scaleY = image.naturalHeight / image.height;
 
-	canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
-	canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
+	canvas.width = DESIRED_IMAGE_SIZE;
+	canvas.height = DESIRED_IMAGE_SIZE;
 
 	ctx.scale(pixelRatio, pixelRatio);
 	ctx.imageSmoothingQuality = "high";
@@ -25,19 +23,21 @@ export default function setCanvasPreview(
 
 	const cropX = crop.x * scaleX;
 	const cropY = crop.y * scaleY;
+	const cropW = crop.width * scaleX * pixelRatio
+	const cropH = crop.height * scaleX * pixelRatio
+
 
 	// Move the crop origin to the canvas origin (0,0)
-	ctx.translate(-cropX, -cropY);
 	ctx.drawImage(
 		image,
+		cropX,
+		cropY,
+		cropW,
+		cropH,
 		0,
 		0,
-		image.naturalWidth,
-		image.naturalHeight,
-		0,
-		0,
-		image.naturalWidth,
-		image.naturalHeight
+		canvas.width,
+		canvas.height
 	);
 
 	ctx.restore();
