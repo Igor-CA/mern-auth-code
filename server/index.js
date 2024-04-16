@@ -8,9 +8,9 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const path = require("path");
 const MongoStore = require("connect-mongo");
+const userFunctions = require("./controllers/user");
 const app = express();
 
-const userFunctions = require("./controllers/user");
 
 mongoose
 	.connect(process.env.MONGODB_URI, {
@@ -47,9 +47,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 require("./passportConfig")(passport);
 
+app.use(express.static(path.resolve(__dirname, "public")));
+
 app.post("/api/signup", userFunctions.signup);
 
 app.post("/api/login", userFunctions.login);
+app.post("/api/changeProfilePic", userFunctions.changeProfilePicture);
+app.get("/api/logout", userFunctions.logout);
 
 app.post("/api/forgot", userFunctions.sendResetEmail);
 app.post("/api/reset-password", userFunctions.resetPassword);
@@ -57,6 +61,19 @@ app.post("/api/reset-password", userFunctions.resetPassword);
 app.get("/api/user", (req, res) => {
 	res.send(req.user);
 });
+
+app.get(
+	"/api/auth/google",
+	passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+	"/auth/google/callback",
+	passport.authenticate("google", { failureRedirect: "/login" }),
+	(req, res) => {
+		res.redirect("/");
+	}
+);
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "../client/build")));

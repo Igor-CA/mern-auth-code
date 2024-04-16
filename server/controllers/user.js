@@ -3,6 +3,19 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const multer = require("multer");
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, "public/images/avatar");
+	},
+	filename: function (req, file, cb) {
+		const userId = req.user._id;
+		const fileExtension = file.originalname.split(".").pop();
+		const filename = `${userId}.${fileExtension}`;
+		cb(null, filename);
+	},
+});
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 const { body, validationResult } = require("express-validator");
 
@@ -69,12 +82,14 @@ exports.signup = [
 		} = req.body;
 
 		if (password !== confirmPassword) {
-			return res.status(409).json({ message: "As senhas devem coincidir" });
-		}
-		if (!tosCheckbox) {
 			return res
 				.status(409)
-				.json({ message: "Concorde com nossos termos para criar uma conta" });
+				.json({ message: "As senhas devem coincidir" });
+		}
+		if (!tosCheckbox) {
+			return res.status(409).json({
+				message: "Concorde com nossos termos para criar uma conta",
+			});
 		}
 
 		const [existingUser] = await User.find()
@@ -124,9 +139,9 @@ exports.login = [
 			.or([{ username: req.body.login }, { email: req.body.login }])
 			.limit(1);
 		if (!user) {
-			res
-				.status(401)
-				.json({ message: "Nome de usuário ou senha incorretos tente novamente" });
+			res.status(401).json({
+				message: "Nome de usuário ou senha incorretos tente novamente",
+			});
 			return;
 		}
 
@@ -140,9 +155,9 @@ exports.login = [
 				res.send({ msg: "Successfully authenticated" });
 			});
 		} else {
-			res
-				.status(401)
-				.json({ message: "Nome de usuário ou senha incorretos tente novamente" });
+			res.status(401).json({
+				message: "Nome de usuário ou senha incorretos tente novamente",
+			});
 		}
 	}),
 ];
@@ -248,7 +263,7 @@ exports.resetPassword = [
 			return;
 		}
 		const currentTimeStamp = new Date();
-		const userTimeStamp = new Date(user.tokenTimestamp)
+		const userTimeStamp = new Date(user.tokenTimestamp);
 		if (currentTimeStamp > userTimeStamp) {
 			res.status(400).json({ message: "Erro: Esse link já expirou" });
 			return;
@@ -259,5 +274,39 @@ exports.resetPassword = [
 		user.token = null;
 		user.save();
 		res.send("Password changed successfully");
+	}),
+];
+
+exports.logout = (req, res, next) => {
+	req.logout(function (err) {
+		if (err) {
+			return next(err);
+		}
+		res.send({ msg: "Successfully logout" });
+	});
+};
+
+exports.isAuthenticated = (req, res, next) => {
+	if (!req.user) {
+		return res.status(401).json({ error: "Authentication required" });
+	}
+	next();
+};
+
+exports.changeProfilePicture = [
+	(req, res, next) => {
+		if (!req.user) {
+			return res.status(401).json({ error: "Authentication required" });
+		}
+		next();
+	},
+
+	upload.single("file"),
+
+	asyncHandler(async (req, res, next) => {
+		const user = await User.findById(req.user._id);
+		user.profileImageUrl = `/images/avatar/${req.file.filename}`;
+		await user.save();
+		res.status(201).json(user);
 	}),
 ];

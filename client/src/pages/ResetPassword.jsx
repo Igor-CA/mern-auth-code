@@ -139,10 +139,10 @@ export default function ResetPasswordPage() {
 					required
 					pattern={formData.password}
 				/>
-				<button className="bg-blue-400 text-white p-1 font-semibold rounded">
+				<button className="bg-slate-600 text-white p-2 font-semibold rounded">
 					Definir nova senha
 				</button>
-				<Link to={"/login"} className="text-blue-400">
+				<Link to={"/login"} className="text-slate-600 underline">
 					Entrar
 				</Link>
 			</form>
