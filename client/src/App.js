@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import "react-image-crop/dist/ReactCrop.css";
 import MainPage from "./pages/MainPage";
 import ResetPassword from "./pages/ResetPassword";
 import SendEmail from "./pages/ForgotPage";
