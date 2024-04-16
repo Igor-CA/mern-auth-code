@@ -39,7 +39,7 @@ export default function MainPage() {
 		axios({
 			method: "POST",
 			withCredentials: true,
-			url: "http://localhost:3001/api/changeProfilePic",
+			url: "/api/changeProfilePic",
 			data: formData,
 			headers: {
 				"Content-Type": "multipart/form-data",
