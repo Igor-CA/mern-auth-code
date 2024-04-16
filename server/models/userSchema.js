@@ -5,6 +5,7 @@ const user = new mongoose.Schema({
 	email: { type: String },
 	tokenTimestamp: { type: Date },
 	token: { type: String },
+	profileImageUrl:  { type: String },
 });
 
 module.exports = mongoose.model("User", user);

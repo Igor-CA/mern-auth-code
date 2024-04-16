@@ -3,7 +3,19 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-
+const multer = require("multer");
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, "public/images/avatar");
+	},
+	filename: function (req, file, cb) {
+		const userId = req.user._id;
+		const fileExtension = file.originalname.split(".").pop();
+		const filename = `${userId}.${fileExtension}`;
+		cb(null, filename);
+	},
+});
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 const { body, validationResult } = require("express-validator");
 
@@ -277,11 +289,24 @@ exports.logout = (req, res, next) => {
 exports.isAuthenticated = (req, res, next) => {
 	if (!req.user) {
 		return res.status(401).json({ error: "Authentication required" });
-    }
-	console.log("is authenticated")
-    next();
+	}
+	next();
 };
 
-exports.changeProfilePicture = (req, res, next) => {
-	res.send({ msg: "Successfully image" });
-};
+exports.changeProfilePicture = [
+	(req, res, next) => {
+		if (!req.user) {
+			return res.status(401).json({ error: "Authentication required" });
+		}
+		next();
+	},
+
+	upload.single("file"),
+
+	asyncHandler(async (req, res, next) => {
+		const user = await User.findById(req.user._id);
+		user.profileImageUrl = `/images/avatar/${req.file.filename}`;
+		await user.save();
+		res.status(201).json(user);
+	}),
+];

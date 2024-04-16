@@ -1,7 +1,7 @@
 const User = require("./models/userSchema");
 const bcrypt = require("bcrypt");
 const localStrategy = require("passport-local").Strategy;
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 module.exports = function (passport) {
 	passport.use(
@@ -13,11 +13,9 @@ module.exports = function (passport) {
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
-					console.log(profile)
 					const user = await User.findOne({
 						email: profile._json.email,
 					});
-					
 					if (!user) {
 						const newUser = new User({
 							email: profile._json.email,
@@ -26,8 +24,6 @@ module.exports = function (passport) {
 						await newUser.save();
 						return done(null, newUser);
 					}
-
-
 					return done(null, user);
 				} catch (err) {
 					return done(err);
@@ -68,7 +64,8 @@ module.exports = function (passport) {
 			const user = await User.findById(id);
 			const userInfo = {
 				username: user.username,
-				_id:user._id
+				_id: user._id,
+				profilePic: (user.profileImageUrl)?user.profileImageUrl:"images/avatar/default.webp",
 			};
 			done(null, userInfo);
 		} catch (err) {

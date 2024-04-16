@@ -11,19 +11,6 @@ const MongoStore = require("connect-mongo");
 const userFunctions = require("./controllers/user");
 const app = express();
 
-const multer = require("multer");
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		cb(null, "public/images");
-	},
-	filename: function (req, file, cb) {
-		const userId = req.user._id; 
-        const fileExtension = file.originalname.split('.').pop();
-        const filename = `profilePicture_${userId}.${fileExtension}`;
-        cb(null, filename);
-	},
-});
-const upload = multer({ storage ,limits: { fileSize: 10 * 1024 * 1024 }});
 
 mongoose
 	.connect(process.env.MONGODB_URI, {
@@ -60,15 +47,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 require("./passportConfig")(passport);
 
+app.use(express.static(path.resolve(__dirname, "public")));
+
 app.post("/api/signup", userFunctions.signup);
 
 app.post("/api/login", userFunctions.login);
-app.post(
-	"/api/changeProfilePic",
-	userFunctions.isAuthenticated,
-	upload.single("file"),
-	userFunctions.changeProfilePicture
-);
+app.post("/api/changeProfilePic", userFunctions.changeProfilePicture);
 app.get("/api/logout", userFunctions.logout);
 
 app.post("/api/forgot", userFunctions.sendResetEmail);
